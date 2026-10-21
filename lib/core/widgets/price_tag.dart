@@ -22,26 +22,30 @@ class PriceTag extends StatelessWidget {
     final currency = showCurrency ? AppConstants.currencySymbol : '';
     final hasDiscount = originalPrice != null && originalPrice! > price;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [
-        Text(
-          '$currency${price.toStringAsFixed(2)}',
-          style: priceStyle ?? AppTextStyles.priceStyle.copyWith(color: AppColors.primary),
-        ),
-        if (hasDiscount) ...[
-          const SizedBox(width: 6),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
           Text(
-            '$currency${originalPrice!.toStringAsFixed(2)}',
-            style: AppTextStyles.bodySmall.copyWith(
-              decoration: TextDecoration.lineThrough,
-              color: AppColors.lightTextTertiary,
-            ),
+            '$currency${price.toStringAsFixed(2)}',
+            style: priceStyle ?? AppTextStyles.priceStyle.copyWith(color: AppColors.primary),
           ),
+          if (hasDiscount) ...[
+            const SizedBox(width: 6),
+            Text(
+              '$currency${originalPrice!.toStringAsFixed(2)}',
+              style: AppTextStyles.bodySmall.copyWith(
+                decoration: TextDecoration.lineThrough,
+                color: AppColors.lightTextTertiary,
+              ),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

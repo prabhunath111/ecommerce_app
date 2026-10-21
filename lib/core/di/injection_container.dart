@@ -46,22 +46,32 @@ Future<void> initDependencies() async {
   // ----------------------------------------------------
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  sl.registerLazySingleton<StorageService>(() => SharedPreferencesStorageService(sl()));
+  sl.registerLazySingleton<StorageService>(
+    () => SharedPreferencesStorageService(sl()),
+  );
   sl.registerLazySingleton<PaymentService>(() => RazorpayPaymentService());
   sl.registerLazySingleton<DioClient>(() => DioClient(storageService: sl()));
 
   // ----------------------------------------------------
   // Theme & Appearance
   // ----------------------------------------------------
-  sl.registerLazySingleton<ThemeLocalDataSource>(() => ThemeLocalDataSourceImpl(storageService: sl()));
-  sl.registerLazySingleton<ThemeController>(() => ThemeController(themeLocalDataSource: sl()));
+  sl.registerLazySingleton<ThemeLocalDataSource>(
+    () => ThemeLocalDataSourceImpl(storageService: sl()),
+  );
+  sl.registerLazySingleton<ThemeController>(
+    () => ThemeController(themeLocalDataSource: sl()),
+  );
   Get.put(sl<ThemeController>());
 
   // ----------------------------------------------------
   // Auth Feature
   // ----------------------------------------------------
-  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(dioClient: sl()));
-  sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(storageService: sl()));
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(dioClient: sl()),
+  );
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(storageService: sl()),
+  );
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
@@ -82,8 +92,12 @@ Future<void> initDependencies() async {
   // ----------------------------------------------------
   // Products Feature
   // ----------------------------------------------------
-  sl.registerLazySingleton<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(dioClient: sl()));
-  sl.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(remoteDataSource: sl()));
+  sl.registerLazySingleton<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(dioClient: sl()),
+  );
+  sl.registerLazySingleton<ProductRepository>(
+    () => ProductRepositoryImpl(remoteDataSource: sl()),
+  );
   sl.registerLazySingleton(() => GetProductsUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetProductByIdUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetCategoriesUseCase(repository: sl()));
@@ -101,8 +115,12 @@ Future<void> initDependencies() async {
   // ----------------------------------------------------
   // Cart Feature
   // ----------------------------------------------------
-  sl.registerLazySingleton<CartLocalDataSource>(() => CartLocalDataSourceImpl(storageService: sl()));
-  sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(localDataSource: sl()));
+  sl.registerLazySingleton<CartLocalDataSource>(
+    () => CartLocalDataSourceImpl(storageService: sl()),
+  );
+  sl.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(localDataSource: sl()),
+  );
   sl.registerLazySingleton(() => GetCartUseCase(repository: sl()));
   sl.registerLazySingleton(() => AddToCartUseCase(repository: sl()));
   sl.registerLazySingleton(() => UpdateCartQuantityUseCase(repository: sl()));
@@ -126,10 +144,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => PlaceOrderUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetOrderHistoryUseCase(repository: sl()));
   sl.registerLazySingleton(
-    () => CheckoutController(
-      placeOrderUseCase: sl(),
-      paymentService: sl(),
-    ),
+    () => CheckoutController(placeOrderUseCase: sl(), paymentService: sl()),
   );
   Get.put(sl<CheckoutController>());
 }
