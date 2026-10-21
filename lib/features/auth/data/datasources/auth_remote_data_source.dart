@@ -25,7 +25,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       try {
         final response = await dioClient.post(
           ApiEndpoints.login,
-          data: {'username': email.split('@').first, 'password': password},
+          data: {'email': email, 'password': password},
         );
 
         if (response.statusCode == 200 && response.data != null) {
@@ -51,8 +51,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
         token: 'jwt_trendify_session_${DateTime.now().millisecondsSinceEpoch}',
-        phone: '+91 98765 43210',
-        address: '22 Indiranagar, Bangalore, KA, India',
+        phone: '+91 95472 71228',
+        address: 'JP Nagar, Bangalore, KA, India',
       );
     } on AppException {
       rethrow;
