@@ -16,7 +16,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -35,7 +36,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animController, curve: const Interval(0.2, 1.0, curve: Curves.easeIn)),
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeIn),
+      ),
     );
 
     _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
@@ -51,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (authCtrl.isAuthenticated) {
         context.go(AppRoutes.home);
       } else {
-        context.go(AppRoutes.home); // Allow browsing home feed immediately or sign in
+        context.go(AppRoutes.signIn);
       }
     });
   }
@@ -71,11 +75,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF6C5CE7),
-              Color(0xFF5344CA),
-              Color(0xFF1E1E2E),
-            ],
+            colors: [Color(0xFF6C5CE7), Color(0xFF5344CA), Color(0xFF1E1E2E)],
           ),
         ),
         child: SafeArea(
@@ -93,33 +93,33 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     scale: _pulseAnimation,
                     child: Container(
                       height: 110,
-                    width: 110,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(50),
-                          blurRadius: 30,
-                          offset: const Offset(0, 15),
+                      width: 110,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(50),
+                            blurRadius: 30,
+                            offset: const Offset(0, 15),
+                          ),
+                          BoxShadow(
+                            color: AppColors.secondary.withAlpha(80),
+                            blurRadius: 40,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.shopping_bag_rounded,
+                          size: 58,
+                          color: AppColors.primary,
                         ),
-                        BoxShadow(
-                          color: AppColors.secondary.withAlpha(80),
-                          blurRadius: 40,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.shopping_bag_rounded,
-                        size: 58,
-                        color: AppColors.primary,
                       ),
                     ),
                   ),
                 ),
-              ),
               ),
 
               const SizedBox(height: AppSpacing.xl),

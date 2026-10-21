@@ -168,7 +168,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () => context.push(AppRoutes.forgotPassword),
                       child: Text(
                         'Forgot Password?',
                         style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary),

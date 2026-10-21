@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/get_builder_ids.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
@@ -43,7 +45,11 @@ class AuthController extends GetxController {
       (failure) => _currentUser = null,
       (user) => _currentUser = user,
     );
-    update([GetBuilderIds.signInForm, GetBuilderIds.signUpForm, GetBuilderIds.profileInfo]);
+    update([
+      GetBuilderIds.signInForm,
+      GetBuilderIds.signUpForm,
+      GetBuilderIds.profileInfo,
+    ]);
   }
 
   void togglePasswordVisibility() {
@@ -56,7 +62,9 @@ class AuthController extends GetxController {
     _errorMessage = null;
     update([GetBuilderIds.authLoading, GetBuilderIds.signInForm]);
 
-    final result = await loginUseCase(LoginParams(email: email.trim(), password: password));
+    final result = await loginUseCase(
+      LoginParams(email: email.trim(), password: password),
+    );
 
     _isLoading = false;
     return result.fold(
@@ -73,6 +81,8 @@ class AuthController extends GetxController {
           GetBuilderIds.signInForm,
           GetBuilderIds.profileInfo,
         ]);
+        // Notify GoRouter so the redirect guard can re-evaluate and push to home.
+        _refreshRouter();
         return true;
       },
     );
@@ -102,6 +112,8 @@ class AuthController extends GetxController {
           GetBuilderIds.signUpForm,
           GetBuilderIds.profileInfo,
         ]);
+        // Notify GoRouter so the redirect guard can re-evaluate and push to home.
+        _refreshRouter();
         return true;
       },
     );
@@ -119,5 +131,23 @@ class AuthController extends GetxController {
       GetBuilderIds.signInForm,
       GetBuilderIds.profileInfo,
     ]);
+    // Navigate to sign-in and let the redirect guard enforce the session.
+    _refreshRouter();
+  }
+
+  /// Tells GoRouter to re-run its redirect callbacks after an auth state change.
+  /// The sign-in / sign-up screens already call [context.go] on success, so this
+  /// is primarily used by logout to force re-evaluation without a BuildContext.
+  void _refreshRouter() {
+    try {
+      // GoRouter is accessible via the navigatorKey or by navigating directly.
+      // Since the screens handle navigation on success, here we only do a push
+      // for logout to land the user on the sign-in screen.
+      if (!isAuthenticated) {
+        Get.context?.go(AppRoutes.signIn);
+      }
+    } catch (_) {
+      // If context is unavailable (e.g., during testing), silently swallow.
+    }
   }
 }

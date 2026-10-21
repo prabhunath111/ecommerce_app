@@ -1,49 +1,136 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// OOP Contract for Local Storage / Persistence
 abstract class StorageService {
+  /// Must be called once at startup to warm up the in-memory cache.
   Future<void> init();
+
   Future<bool> setString(String key, String value);
+
+  /// Sync read from in-memory cache. Returns null if the key doesn't exist.
   String? getString(String key);
+
   Future<bool> setBool(String key, bool value);
+
+  /// Sync read from in-memory cache.
   bool? getBool(String key);
+
   Future<bool> setStringList(String key, List<String> value);
+
+  /// Sync read from in-memory cache.
   List<String>? getStringList(String key);
+
   Future<bool> remove(String key);
   Future<bool> clear();
 }
 
-/// SharedPreferences concrete implementation of StorageService
-class SharedPreferencesStorageService implements StorageService {
-  final SharedPreferences _prefs;
+/// flutter_secure_storage implementation of [StorageService].
+///
+/// All values are stored encrypted on-device (Keychain on iOS/macOS,
+/// Keystore on Android, libsecret on Linux, Credential Locker on Windows).
+/// An in-memory cache mirrors every value after [init] is called so that
+/// synchronous getters remain fast without blocking the UI thread.
+class FlutterSecureStorageService implements StorageService {
+  final FlutterSecureStorage _storage;
 
-  SharedPreferencesStorageService(this._prefs);
+  /// In-memory mirror of the secure store, populated on [init].
+  final Map<String, String> _cache = {};
 
-  @override
-  Future<void> init() async {}
+  FlutterSecureStorageService({FlutterSecureStorage? storage})
+      : _storage = storage ??
+            const FlutterSecureStorage(
+              // v11+: AndroidOptions uses Android Keystore + AES/GCM by default.
+              aOptions: AndroidOptions(),
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.first_unlock,
+              ),
+            );
 
-  @override
-  Future<bool> setString(String key, String value) => _prefs.setString(key, value);
-
-  @override
-  String? getString(String key) => _prefs.getString(key);
-
-  @override
-  Future<bool> setBool(String key, bool value) => _prefs.setBool(key, value);
-
-  @override
-  bool? getBool(String key) => _prefs.getBool(key);
-
-  @override
-  Future<bool> setStringList(String key, List<String> value) =>
-      _prefs.setStringList(key, value);
-
-  @override
-  List<String>? getStringList(String key) => _prefs.getStringList(key);
+  // ─────────────────────────────────────────────────────────
+  // Lifecycle
+  // ─────────────────────────────────────────────────────────
 
   @override
-  Future<bool> remove(String key) => _prefs.remove(key);
+  Future<void> init() async {
+    final allValues = await _storage.readAll();
+    _cache
+      ..clear()
+      ..addAll(allValues);
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // String
+  // ─────────────────────────────────────────────────────────
 
   @override
-  Future<bool> clear() => _prefs.clear();
+  Future<bool> setString(String key, String value) async {
+    await _storage.write(key: key, value: value);
+    _cache[key] = value;
+    return true;
+  }
+
+  @override
+  String? getString(String key) => _cache[key];
+
+  // ─────────────────────────────────────────────────────────
+  // Bool  (stored as "true" / "false" strings)
+  // ─────────────────────────────────────────────────────────
+
+  @override
+  Future<bool> setBool(String key, bool value) async {
+    final encoded = value.toString(); // "true" or "false"
+    await _storage.write(key: key, value: encoded);
+    _cache[key] = encoded;
+    return true;
+  }
+
+  @override
+  bool? getBool(String key) {
+    final raw = _cache[key];
+    if (raw == null) return null;
+    return raw == 'true';
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // StringList  (stored as JSON array)
+  // ─────────────────────────────────────────────────────────
+
+  @override
+  Future<bool> setStringList(String key, List<String> value) async {
+    final encoded = jsonEncode(value);
+    await _storage.write(key: key, value: encoded);
+    _cache[key] = encoded;
+    return true;
+  }
+
+  @override
+  List<String>? getStringList(String key) {
+    final raw = _cache[key];
+    if (raw == null) return null;
+    try {
+      final decoded = jsonDecode(raw) as List;
+      return decoded.cast<String>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // Remove / Clear
+  // ─────────────────────────────────────────────────────────
+
+  @override
+  Future<bool> remove(String key) async {
+    await _storage.delete(key: key);
+    _cache.remove(key);
+    return true;
+  }
+
+  @override
+  Future<bool> clear() async {
+    await _storage.deleteAll();
+    _cache.clear();
+    return true;
+  }
 }

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
@@ -44,11 +43,13 @@ Future<void> initDependencies() async {
   // ----------------------------------------------------
   // External & Core Services
   // ----------------------------------------------------
-  final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  sl.registerLazySingleton<StorageService>(
-    () => SharedPreferencesStorageService(sl()),
-  );
+
+  // FlutterSecureStorageService: init() warms up the in-memory cache from the
+  // encrypted store so all synchronous getString / getBool calls work correctly.
+  final storageService = FlutterSecureStorageService();
+  await storageService.init();
+  sl.registerLazySingleton<StorageService>(() => storageService);
+
   sl.registerLazySingleton<PaymentService>(() => RazorpayPaymentService());
   sl.registerLazySingleton<DioClient>(() => DioClient(storageService: sl()));
 
