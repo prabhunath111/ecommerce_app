@@ -31,8 +31,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         if (response.statusCode == 200 && response.data != null) {
           final token = response.data['token']?.toString() ?? 'mock_jwt_token_trendify_987';
           return UserModel(
-            id: 'usr_001',
-            name: email.split('@').first.capitalize(),
+            id: response.data['accessToken'],
+            name: response.data['user']['username'],
             email: email,
             avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
             token: token,
