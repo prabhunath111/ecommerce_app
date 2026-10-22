@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/get_builder_ids.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -117,8 +118,8 @@ class ProductController extends GetxController {
     if (existing != null) {
       _selectedProduct = existing;
       update([GetBuilderIds.productDetail]);
+      return;
     }
-
     final result = await getProductByIdUseCase(id);
     result.fold(
       (failure) => null,
