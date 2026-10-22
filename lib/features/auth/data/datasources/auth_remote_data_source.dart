@@ -34,7 +34,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             id: response.data['user']['id'],
             name: response.data['user']['username'],
             email: email,
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+            avatar: 'https://images.openai.com/static-rsc-4/MyuryllVzeLN-klhoFeVS9Q0fL6RFx-Juyix8TlSszORLyVfVCpctvDR4aOW9_y52QtkY7vu50GMWK6sj2MmK7e8KcymuTZfcHizCBa0AQDkHdAmuqSpP8z8l9--B-rTDhhzB9ouetftPMojWk5YXZ7yhauz3eyAvnbXaw1xGXnkNKFrGvqDcok2LUjo_da_?purpose=fullsize',
             token: token,
           );
         }
@@ -49,7 +49,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         id: 'usr_demo_101',
         name: email.contains('@') ? email.split('@').first.capitalize() : 'Alex Morgan',
         email: email,
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+        avatar: 'https://images.openai.com/static-rsc-4/MyuryllVzeLN-klhoFeVS9Q0fL6RFx-Juyix8TlSszORLyVfVCpctvDR4aOW9_y52QtkY7vu50GMWK6sj2MmK7e8KcymuTZfcHizCBa0AQDkHdAmuqSpP8z8l9--B-rTDhhzB9ouetftPMojWk5YXZ7yhauz3eyAvnbXaw1xGXnkNKFrGvqDcok2LUjo_da_?purpose=fullsize',
         token: 'jwt_trendify_session_${DateTime.now().millisecondsSinceEpoch}',
         phone: '+91 95472 71228',
         address: 'JP Nagar, Bangalore, KA, India',

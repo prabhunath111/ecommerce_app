@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
@@ -24,8 +26,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
       try {
         final response = await dioClient.get(endpoint);
-        if (response.statusCode == 200 && response.data is List) {
-          final list = (response.data as List)
+        if (response.statusCode == 200 && response.data['products'] is List) {
+          final list = (response.data['products'] as List)
               .map((item) => ProductModel.fromJson(item as Map<String, dynamic>))
               .toList();
 
