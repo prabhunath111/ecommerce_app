@@ -15,9 +15,16 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, List<ProductEntity>>> getProducts({
     String? category,
     String? query,
+    int page = 1,
+    int limit = 10,
   }) async {
     try {
-      final models = await remoteDataSource.getProducts(category: category, query: query);
+      final models = await remoteDataSource.getProducts(
+        category: category,
+        query: query,
+        page: page,
+        limit: limit,
+      );
       final entities = models.map((m) {
         return m.copyWith(isFavorite: _favoriteProductIds.contains(m.id));
       }).toList();

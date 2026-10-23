@@ -24,10 +24,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final productCtrl = Get.find<ProductController>();
       productCtrl.loadProducts();
@@ -37,9 +39,19 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final productCtrl = Get.find<ProductController>();
+      if (productCtrl.hasMore && !productCtrl.isMoreLoading && !productCtrl.isLoading) {
+        productCtrl.loadMoreProducts();
+      }
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -103,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
           await productCtrl.loadProducts(refresh: true);
         },
         child: CustomScrollView(
+          controller: _scrollController,
           slivers: [
             // Search Input Header
             SliverToBoxAdapter(
@@ -240,8 +253,24 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
 
-            const SliverToBoxAdapter(
-              child: SizedBox(height: AppSpacing.xxl),
+            // Bottom Pagination Indicator
+            GetBuilder<ProductController>(
+              id: GetBuilderIds.productList,
+              builder: (controller) {
+                if (controller.isMoreLoading) {
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.l),
+                      child: Center(
+                        child: CircularProgressIndicator(color: AppColors.primary),
+                      ),
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.xxl),
+                );
+              },
             ),
           ],
         ),

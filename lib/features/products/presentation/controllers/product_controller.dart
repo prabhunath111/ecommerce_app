@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../../../../core/constants/get_builder_ids.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -26,6 +25,10 @@ class ProductController extends GetxController {
   String _selectedCategory = 'all';
   String _searchQuery = '';
   bool _isLoading = false;
+  bool _isMoreLoading = false;
+  bool _hasMore = true;
+  int _currentPage = 1;
+  static const int _limit = 10;
   String? _errorMessage;
   ProductEntity? _selectedProduct;
 
@@ -34,6 +37,9 @@ class ProductController extends GetxController {
   String get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
+  bool get isMoreLoading => _isMoreLoading;
+  bool get hasMore => _hasMore;
+  int get currentPage => _currentPage;
   String? get errorMessage => _errorMessage;
   ProductEntity? get selectedProduct => _selectedProduct;
 
@@ -56,6 +62,8 @@ class ProductController extends GetxController {
   }
 
   Future<void> loadProducts({bool refresh = false}) async {
+    _currentPage = 1;
+    _hasMore = true;
     _isLoading = true;
     _errorMessage = null;
     update([GetBuilderIds.productList]);
@@ -64,6 +72,8 @@ class ProductController extends GetxController {
       GetProductsParams(
         category: _selectedCategory == 'all' ? null : _selectedCategory,
         query: _searchQuery.isEmpty ? null : _searchQuery,
+        page: _currentPage,
+        limit: _limit,
       ),
     );
 
@@ -75,7 +85,42 @@ class ProductController extends GetxController {
       },
       (data) {
         _products = data;
+        _hasMore = data.length >= _limit;
         _errorMessage = null;
+        update([GetBuilderIds.productList]);
+      },
+    );
+  }
+
+  Future<void> loadMoreProducts() async {
+    if (_isMoreLoading || !_hasMore || _isLoading) return;
+
+    _isMoreLoading = true;
+    update([GetBuilderIds.productList]);
+
+    final nextPage = _currentPage + 1;
+    final result = await getProductsUseCase(
+      GetProductsParams(
+        category: _selectedCategory == 'all' ? null : _selectedCategory,
+        query: _searchQuery.isEmpty ? null : _searchQuery,
+        page: nextPage,
+        limit: _limit,
+      ),
+    );
+
+    _isMoreLoading = false;
+    result.fold(
+      (failure) {
+        update([GetBuilderIds.productList]);
+      },
+      (data) {
+        if (data.isEmpty) {
+          _hasMore = false;
+        } else {
+          _currentPage = nextPage;
+          _products.addAll(data);
+          _hasMore = data.length >= _limit;
+        }
         update([GetBuilderIds.productList]);
       },
     );

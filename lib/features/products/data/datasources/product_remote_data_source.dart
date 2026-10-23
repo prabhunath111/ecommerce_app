@@ -1,12 +1,15 @@
-import 'package:flutter/cupertino.dart';
-
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/product_model.dart';
 
 abstract class ProductRemoteDataSource {
-  Future<List<ProductModel>> getProducts({String? category, String? query});
+  Future<List<ProductModel>> getProducts({
+    String? category,
+    String? query,
+    int page = 1,
+    int limit = 10,
+  });
   Future<ProductModel> getProductById(String id);
   Future<List<CategoryModel>> getCategories();
 }
@@ -17,17 +20,35 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   ProductRemoteDataSourceImpl({required this.dioClient});
 
   @override
-  Future<List<ProductModel>> getProducts({String? category, String? query}) async {
+  Future<List<ProductModel>> getProducts({
+    String? category,
+    String? query,
+    int page = 1,
+    int limit = 10,
+  }) async {
     try {
       String endpoint = ApiEndpoints.products;
       if (category != null && category.isNotEmpty && category.toLowerCase() != 'all') {
         endpoint = ApiEndpoints.productsByCategory(category.toLowerCase());
       }
 
+      Map<String, dynamic> queryParams = {
+        'page': page,
+        'limit': limit,
+      };
+
       try {
-        final response = await dioClient.get(endpoint);
-        if (response.statusCode == 200 && response.data['products'] is List) {
-          final list = (response.data['products'] as List)
+        final response = await dioClient.get(endpoint, queryParameters: queryParams);
+        List rawList = [];
+        if (response.statusCode == 200) {
+          if (response.data is List) {
+            rawList = response.data as List;
+          } else if (response.data is Map && response.data['products'] is List) {
+            rawList = response.data['products'] as List;
+          } else if (response.data is Map && response.data['data'] is List) {
+            rawList = response.data['data'] as List;
+          }
+          final list = rawList
               .map((item) => ProductModel.fromJson(item as Map<String, dynamic>))
               .toList();
 
@@ -41,8 +62,14 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         // Fallback to local curated catalogue if API fails or offline
       }
 
-      // High Quality Curated Catalog Fallback
-      return _getCuratedFallbackProducts(category: category, query: query);
+      // High Quality Curated Catalog Fallback with pagination
+      final fullList = _getCuratedFallbackProducts(category: category, query: query);
+      final startIndex = (page - 1) * limit;
+      if (startIndex >= fullList.length) {
+        return [];
+      }
+      final endIndex = (startIndex + limit) > fullList.length ? fullList.length : (startIndex + limit);
+      return fullList.sublist(startIndex, endIndex);
     } catch (e) {
       throw ServerException(message: 'Failed to retrieve products: $e');
     }

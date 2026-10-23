@@ -30,23 +30,31 @@ void main() {
 
   test('should return list of products from repository', () async {
     // Arrange
-    when(() => mockRepository.getProducts(category: any(named: 'category'), query: any(named: 'query')))
-        .thenAnswer((_) async => const Right([tProduct]));
+    when(() => mockRepository.getProducts(
+      category: any(named: 'category'),
+      query: any(named: 'query'),
+      page: any(named: 'page'),
+      limit: any(named: 'limit'),
+    )).thenAnswer((_) async => const Right([tProduct]));
 
     // Act
     final result = await useCase(const GetProductsParams(category: 'all', query: ''));
 
     // Assert
     expect(result, const Right([tProduct]));
-    verify(() => mockRepository.getProducts(category: 'all', query: '')).called(1);
+    verify(() => mockRepository.getProducts(category: 'all', query: '', page: 1, limit: 10)).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 
   test('should return ServerFailure when repository fails', () async {
     // Arrange
     const tFailure = ServerFailure(message: 'Server error');
-    when(() => mockRepository.getProducts(category: any(named: 'category'), query: any(named: 'query')))
-        .thenAnswer((_) async => const Left(tFailure));
+    when(() => mockRepository.getProducts(
+      category: any(named: 'category'),
+      query: any(named: 'query'),
+      page: any(named: 'page'),
+      limit: any(named: 'limit'),
+    )).thenAnswer((_) async => const Left(tFailure));
 
     // Act
     final result = await useCase(const GetProductsParams());

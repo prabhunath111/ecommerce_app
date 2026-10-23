@@ -8,11 +8,18 @@ import '../repositories/product_repository.dart';
 class GetProductsParams extends Equatable {
   final String? category;
   final String? query;
+  final int page;
+  final int limit;
 
-  const GetProductsParams({this.category, this.query});
+  const GetProductsParams({
+    this.category,
+    this.query,
+    this.page = 1,
+    this.limit = 10,
+  });
 
   @override
-  List<Object?> get props => [category, query];
+  List<Object?> get props => [category, query, page, limit];
 }
 
 class GetProductsUseCase implements UseCase<List<ProductEntity>, GetProductsParams> {
@@ -22,6 +29,11 @@ class GetProductsUseCase implements UseCase<List<ProductEntity>, GetProductsPara
 
   @override
   Future<Either<Failure, List<ProductEntity>>> call(GetProductsParams params) {
-    return repository.getProducts(category: params.category, query: params.query);
+    return repository.getProducts(
+      category: params.category,
+      query: params.query,
+      page: params.page,
+      limit: params.limit,
+    );
   }
 }
