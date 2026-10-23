@@ -19,6 +19,8 @@ class PriceTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final currency = showCurrency ? AppConstants.currencySymbol : '';
     final hasDiscount = originalPrice != null && originalPrice! > price;
 
@@ -40,7 +42,7 @@ class PriceTag extends StatelessWidget {
               '$currency${originalPrice!.toStringAsFixed(2)}',
               style: AppTextStyles.bodySmall.copyWith(
                 decoration: TextDecoration.lineThrough,
-                color: AppColors.lightTextTertiary,
+                color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
               ),
             ),
           ],

@@ -355,12 +355,18 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildSummaryRow(String label, String value, {Color? valueColor}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary)),
+          Text(
+            label,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+            ),
+          ),
           Text(
             value,
             style: AppTextStyles.labelMedium.copyWith(color: valueColor, fontWeight: FontWeight.w600),

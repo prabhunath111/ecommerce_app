@@ -16,6 +16,9 @@ class RatingBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -33,7 +36,9 @@ class RatingBar extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             '($reviewCount)',
-            style: AppTextStyles.labelSmall.copyWith(color: AppColors.lightTextTertiary),
+            style: AppTextStyles.labelSmall.copyWith(
+              color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
+            ),
           ),
         ],
       ],

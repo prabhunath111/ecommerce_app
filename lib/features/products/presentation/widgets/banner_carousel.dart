@@ -16,24 +16,24 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
   final List<Map<String, dynamic>> _banners = [
     {
-      'title': 'Autumn Warmth',
-      'discount': 'UP TO 50% OFF',
-      'subtitle': 'Discover cozy wool layers & outerwear',
-      'gradient': [const Color(0xFF6C5CE7), const Color(0xFF81ECEC)],
+      'title': 'Fashion Carnival',
+      'discount': '50% - 80% OFF',
+      'subtitle': 'Discover trending styles & top brands',
+      'gradient': [const Color(0xFFFF3F6C), const Color(0xFFFF6584)],
       'icon': Icons.local_offer_rounded,
     },
     {
-      'title': 'New Collection',
+      'title': 'New Season Drop',
       'discount': 'FLAT 30% OFF',
-      'subtitle': 'Use coupon TRENDY30 on checkout',
-      'gradient': [const Color(0xFFFD79A8), const Color(0xFFFAB1A0)],
+      'subtitle': 'Use coupon MYNTRA30 on checkout',
+      'gradient': [const Color(0xFFFF527B), const Color(0xFFFF905A)],
       'icon': Icons.auto_awesome_rounded,
     },
     {
-      'title': 'Sneaker Fest',
-      'discount': 'BUY 1 GET 1',
+      'title': 'Sneaker & Shoe Fest',
+      'discount': 'MIN. 40% OFF',
       'subtitle': 'Limited street drop edition available',
-      'gradient': [const Color(0xFF00CEC9), const Color(0xFF0984E3)],
+      'gradient': [const Color(0xFFFF7A00), const Color(0xFFFFB400)],
       'icon': Icons.flash_on_rounded,
     },
   ];
@@ -140,7 +140,11 @@ class _BannerCarouselState extends State<BannerCarousel> {
               width: _currentPage == i ? 18 : 6,
               height: 6,
               decoration: BoxDecoration(
-                color: _currentPage == i ? AppColors.primary : AppColors.lightTextTertiary,
+                color: _currentPage == i
+                    ? AppColors.primary
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.lightTextTertiary),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),

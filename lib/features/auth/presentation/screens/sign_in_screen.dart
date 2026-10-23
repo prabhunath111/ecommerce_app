@@ -44,6 +44,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -87,7 +90,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     'Sign in to access your curated shopping feed',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppSpacing.xxl),
@@ -206,7 +211,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     children: [
                       Text(
                         "Don't have an account? ",
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () => context.go(AppRoutes.signUp),

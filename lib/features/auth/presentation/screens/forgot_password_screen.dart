@@ -60,6 +60,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -75,7 +78,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
             child: FadeTransition(
               opacity: _fadeAnim,
-              child: _emailSent ? _buildSuccessState() : _buildFormState(),
+              child: _emailSent ? _buildSuccessState(isDark) : _buildFormState(isDark),
             ),
           ),
         ),
@@ -84,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   /// The form state – user enters their email address.
-  Widget _buildFormState() {
+  Widget _buildFormState(bool isDark) {
     return Form(
       key: _formKey,
       child: Column(
@@ -130,7 +133,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           Text(
             'Enter the email address linked to your account and we\'ll send you a reset link.',
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.lightTextSecondary,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -182,7 +185,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   /// The success state shown after the email is dispatched.
-  Widget _buildSuccessState() {
+  Widget _buildSuccessState(bool isDark) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -228,7 +231,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         Text(
           'We\'ve sent a password reset link to\n${_emailController.text.trim()}',
           style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.lightTextSecondary,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
           ),
           textAlign: TextAlign.center,
         ),

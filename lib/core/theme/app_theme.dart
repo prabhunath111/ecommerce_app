@@ -14,7 +14,7 @@ class AppTheme {
       surface: AppColors.lightSurface,
       error: AppColors.error,
       onPrimary: Colors.white,
-      onSecondary: Colors.black,
+      onSecondary: Colors.white,
       onSurface: AppColors.lightTextPrimary,
       onError: Colors.white,
     );
@@ -25,7 +25,7 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.lightBackground,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.lightSurface,
         foregroundColor: AppColors.lightTextPrimary,
         elevation: 0,
         centerTitle: true,
@@ -33,10 +33,23 @@ class AppTheme {
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: const IconThemeData(color: AppColors.lightTextPrimary),
       ),
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.displayLarge.copyWith(color: AppColors.lightTextPrimary),
+        displayMedium: AppTextStyles.displayMedium.copyWith(color: AppColors.lightTextPrimary),
+        titleLarge: AppTextStyles.titleLarge.copyWith(color: AppColors.lightTextPrimary),
+        titleMedium: AppTextStyles.titleMedium.copyWith(color: AppColors.lightTextPrimary),
+        titleSmall: AppTextStyles.titleSmall.copyWith(color: AppColors.lightTextPrimary),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.lightTextPrimary),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextPrimary),
+        bodySmall: AppTextStyles.bodySmall.copyWith(color: AppColors.lightTextSecondary),
+        labelLarge: AppTextStyles.labelLarge.copyWith(color: AppColors.lightTextPrimary),
+        labelMedium: AppTextStyles.labelMedium.copyWith(color: AppColors.lightTextSecondary),
+        labelSmall: AppTextStyles.labelSmall.copyWith(color: AppColors.lightTextTertiary),
+      ),
       cardTheme: CardThemeData(
         color: AppColors.lightCard,
         elevation: 2,
-        shadowColor: Colors.black.withAlpha(15),
+        shadowColor: Colors.black.withAlpha(12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           side: const BorderSide(color: AppColors.lightBorder, width: 0.8),
@@ -112,12 +125,12 @@ class AppTheme {
 
   static ThemeData get darkTheme {
     final colorScheme = const ColorScheme.dark(
-      primary: AppColors.primaryLight,
+      primary: AppColors.primary,
       secondary: AppColors.secondary,
       surface: AppColors.darkSurface,
       error: AppColors.error,
-      onPrimary: Colors.black,
-      onSecondary: Colors.black,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
       onSurface: AppColors.darkTextPrimary,
       onError: Colors.white,
     );
@@ -135,6 +148,19 @@ class AppTheme {
         titleTextStyle: AppTextStyles.titleMedium.copyWith(color: AppColors.darkTextPrimary),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         iconTheme: const IconThemeData(color: AppColors.darkTextPrimary),
+      ),
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.displayLarge.copyWith(color: AppColors.darkTextPrimary),
+        displayMedium: AppTextStyles.displayMedium.copyWith(color: AppColors.darkTextPrimary),
+        titleLarge: AppTextStyles.titleLarge.copyWith(color: AppColors.darkTextPrimary),
+        titleMedium: AppTextStyles.titleMedium.copyWith(color: AppColors.darkTextPrimary),
+        titleSmall: AppTextStyles.titleSmall.copyWith(color: AppColors.darkTextPrimary),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.darkTextPrimary),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.darkTextPrimary),
+        bodySmall: AppTextStyles.bodySmall.copyWith(color: AppColors.darkTextSecondary),
+        labelLarge: AppTextStyles.labelLarge.copyWith(color: AppColors.darkTextPrimary),
+        labelMedium: AppTextStyles.labelMedium.copyWith(color: AppColors.darkTextSecondary),
+        labelSmall: AppTextStyles.labelSmall.copyWith(color: AppColors.darkTextTertiary),
       ),
       cardTheme: CardThemeData(
         color: AppColors.darkCard,
@@ -183,7 +209,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 1.8),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.8),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),

@@ -49,6 +49,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -69,7 +72,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Join thousands discovering top tier fashion brands.',
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
 
@@ -181,7 +186,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () => context.go(AppRoutes.signIn),

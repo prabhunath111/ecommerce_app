@@ -17,6 +17,7 @@ class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
 
   void _showOrderSuccessDialog(BuildContext context, OrderEntity order) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -58,7 +59,9 @@ class CheckoutScreen extends StatelessWidget {
               Text(
                 'Your payment was verified via Razorpay.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                ),
               ),
               const SizedBox(height: AppSpacing.m),
               Container(
@@ -279,15 +282,15 @@ class CheckoutScreen extends StatelessWidget {
             AppCard(
               child: Column(
                 children: [
-                  _buildRow('Subtotal', '${AppConstants.currencySymbol}${cartCtrl.subtotal.toStringAsFixed(2)}'),
+                  _buildRow(context, 'Subtotal', '${AppConstants.currencySymbol}${cartCtrl.subtotal.toStringAsFixed(2)}'),
                   if (cartCtrl.discountAmount > 0)
                     _buildRow(
-                      'Discount',
+                      context, 'Discount',
                       '-${AppConstants.currencySymbol}${cartCtrl.discountAmount.toStringAsFixed(2)}',
                       color: AppColors.success,
                     ),
-                  _buildRow('Tax (GST)', '${AppConstants.currencySymbol}${cartCtrl.taxAmount.toStringAsFixed(2)}'),
-                  _buildRow('Shipping', cartCtrl.shippingAmount == 0 ? 'FREE' : '${AppConstants.currencySymbol}${cartCtrl.shippingAmount.toStringAsFixed(2)}'),
+                  _buildRow(context, 'Tax (GST)', '${AppConstants.currencySymbol}${cartCtrl.taxAmount.toStringAsFixed(2)}'),
+                  _buildRow(context, 'Shipping', cartCtrl.shippingAmount == 0 ? 'FREE' : '${AppConstants.currencySymbol}${cartCtrl.shippingAmount.toStringAsFixed(2)}'),
                   const Divider(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -433,13 +436,19 @@ class CheckoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, String value, {Color? color}) {
+  Widget _buildRow(BuildContext context, String label, String value, {Color? color}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary)),
+          Text(
+            label,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+            ),
+          ),
           Text(value, style: AppTextStyles.labelMedium.copyWith(color: color, fontWeight: FontWeight.w600)),
         ],
       ),

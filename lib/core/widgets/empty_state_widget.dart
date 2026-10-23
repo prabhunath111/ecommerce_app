@@ -22,6 +22,9 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxl),
@@ -45,7 +48,9 @@ class EmptyStateWidget extends StatelessWidget {
             const SizedBox(height: AppSpacing.s),
             Text(
               message,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextSecondary),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
             if (buttonText != null && onButtonPressed != null) ...[
