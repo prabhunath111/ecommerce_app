@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/get_builder_ids.dart';
+import '../../../../core/routes/app_router.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/usecase/usecase.dart';
+import '../../../cart/presentation/controllers/cart_controller.dart';
+import '../../../products/presentation/controllers/product_controller.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
@@ -81,6 +83,12 @@ class AuthController extends GetxController {
           GetBuilderIds.signInForm,
           GetBuilderIds.profileInfo,
         ]);
+        if (Get.isRegistered<ProductController>()) {
+          Get.find<ProductController>().loadProducts(refresh: true);
+        }
+        if (Get.isRegistered<CartController>()) {
+          Get.find<CartController>().loadCart();
+        }
         // Notify GoRouter so the redirect guard can re-evaluate and push to home.
         _refreshRouter();
         return true;
@@ -112,6 +120,12 @@ class AuthController extends GetxController {
           GetBuilderIds.signUpForm,
           GetBuilderIds.profileInfo,
         ]);
+        if (Get.isRegistered<ProductController>()) {
+          Get.find<ProductController>().loadProducts(refresh: true);
+        }
+        if (Get.isRegistered<CartController>()) {
+          Get.find<CartController>().loadCart();
+        }
         // Notify GoRouter so the redirect guard can re-evaluate and push to home.
         _refreshRouter();
         return true;
@@ -135,19 +149,11 @@ class AuthController extends GetxController {
     _refreshRouter();
   }
 
-  /// Tells GoRouter to re-run its redirect callbacks after an auth state change.
-  /// The sign-in / sign-up screens already call [context.go] on success, so this
-  /// is primarily used by logout to force re-evaluation without a BuildContext.
+  /// Navigates the user back to the sign-in page upon logout.
+  /// Uses the static router reference to avoid dependency on [Get.context].
   void _refreshRouter() {
-    try {
-      // GoRouter is accessible via the navigatorKey or by navigating directly.
-      // Since the screens handle navigation on success, here we only do a push
-      // for logout to land the user on the sign-in screen.
-      if (!isAuthenticated) {
-        Get.context?.go(AppRoutes.signIn);
-      }
-    } catch (_) {
-      // If context is unavailable (e.g., during testing), silently swallow.
+    if (!isAuthenticated) {
+      AppRouter.router.go(AppRoutes.signIn);
     }
   }
 }

@@ -26,6 +26,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final productCtrl = Get.find<ProductController>();
+      productCtrl.loadProducts();
+      if (productCtrl.categories.isEmpty) {
+        productCtrl.loadCategories();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();

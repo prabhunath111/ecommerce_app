@@ -54,7 +54,10 @@ class AppRouter {
       if (path == AppRoutes.splash) return null;
 
       // Unauthenticated users trying to access a protected route → sign in.
-      if (!isAuthenticated && _protectedRoutes.any((r) => path.startsWith(r))) {
+      final isProtectedRoute = _protectedRoutes.any(
+        (r) => r == '/' ? path == '/' : (path == r || path.startsWith('$r/')),
+      );
+      if (!isAuthenticated && isProtectedRoute) {
         return AppRoutes.signIn;
       }
 
