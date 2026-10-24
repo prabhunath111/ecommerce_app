@@ -28,14 +28,19 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   }) async {
     try {
       String endpoint = ApiEndpoints.products;
-      if (category != null && category.isNotEmpty && category.toLowerCase() != 'all') {
-        endpoint = ApiEndpoints.productsByCategory(category.toLowerCase());
-      }
 
       Map<String, dynamic> queryParams = {
         'page': page,
         'limit': limit,
       };
+
+      if (category != null && category.isNotEmpty && category.toLowerCase() != 'all') {
+        queryParams['category'] = category;
+      }
+
+      if (query != null && query.trim().isNotEmpty) {
+        queryParams['q'] = query;
+      }
 
       try {
         final response = await dioClient.get(endpoint, queryParameters: queryParams);
@@ -117,8 +122,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
         CategoryModel(id: 'all', name: 'All'),
         CategoryModel(id: 'electronics', name: 'Electronics'),
         CategoryModel(id: 'jewelery', name: 'Jewelry'),
-        CategoryModel(id: "men's clothing", name: "Men's Wear"),
-        CategoryModel(id: "women's clothing", name: "Women's Wear"),
+        CategoryModel(id: "menscloths", name: "Men's Wear"),
+        CategoryModel(id: "womencloths", name: "Women's Wear"),
         CategoryModel(id: 'footwear', name: 'Footwear'),
       ];
     } catch (e) {
