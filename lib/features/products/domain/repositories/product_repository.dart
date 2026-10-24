@@ -12,4 +12,5 @@ abstract class ProductRepository {
   Future<Either<Failure, ProductEntity>> getProductById(String id);
   Future<Either<Failure, List<CategoryEntity>>> getCategories();
   Future<Either<Failure, bool>> toggleFavorite(String productId);
+  Future<Either<Failure, Set<String>>> getFavoriteProductIds();
 }

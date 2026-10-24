@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/dio_client.dart';
@@ -12,6 +13,8 @@ abstract class ProductRemoteDataSource {
   });
   Future<ProductModel> getProductById(String id);
   Future<List<CategoryModel>> getCategories();
+  Future<bool> toggleFavorite(String productId);
+  Future<Set<String>> getFavoriteProductIds();
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -128,6 +131,82 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       ];
     } catch (e) {
       throw ServerException(message: 'Failed to retrieve categories: $e');
+    }
+  }
+
+  @override
+  Future<bool> toggleFavorite(String productId) async {
+    try {
+      final response = await dioClient.post(
+        ApiEndpoints.toggleFavorite,
+        data: {'productId': productId},
+      );
+
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        if (data['isFavorite'] is bool) {
+          return data['isFavorite'] as bool;
+        }
+        if (data['favorite'] is bool) {
+          return data['favorite'] as bool;
+        }
+        if (data['data'] is Map && data['data']['isFavorite'] is bool) {
+          return data['data']['isFavorite'] as bool;
+        }
+        if (data['success'] == true) {
+          return true;
+        }
+      }
+      return true;
+    } on DioException catch (dioErr) {
+      if (dioErr.error is AppException) {
+        throw dioErr.error as AppException;
+      }
+      throw ServerException(message: dioErr.message ?? 'Failed to update favorite status');
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<Set<String>> getFavoriteProductIds() async {
+    try {
+      final response = await dioClient.get(ApiEndpoints.favorites);
+      final data = response.data;
+      final Set<String> favIds = {};
+
+      List rawList = [];
+      if (data is List) {
+        rawList = data;
+      } else if (data is Map) {
+        if (data['favorites'] is List) {
+          rawList = data['favorites'] as List;
+        } else if (data['data'] is List) {
+          rawList = data['data'] as List;
+        } else if (data['items'] is List) {
+          rawList = data['items'] as List;
+        }
+      }
+
+      for (final item in rawList) {
+        if (item is String) {
+          favIds.add(item);
+        } else if (item is Map<String, dynamic>) {
+          if (item['product'] is Map<String, dynamic>) {
+            final p = item['product'] as Map<String, dynamic>;
+            final id = (p['_id'] ?? p['id'])?.toString();
+            if (id != null && id.isNotEmpty) favIds.add(id);
+          } else {
+            final id = (item['_id'] ?? item['id'])?.toString();
+            if (id != null && id.isNotEmpty) favIds.add(id);
+          }
+        }
+      }
+
+      return favIds;
+    } catch (_) {
+      return {};
     }
   }
 

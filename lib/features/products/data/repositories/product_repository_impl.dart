@@ -19,6 +19,14 @@ class ProductRepositoryImpl implements ProductRepository {
     int limit = 10,
   }) async {
     try {
+      if (page == 1) {
+        try {
+          final favIds = await remoteDataSource.getFavoriteProductIds();
+          _favoriteProductIds.clear();
+          _favoriteProductIds.addAll(favIds);
+        } catch (_) {}
+      }
+
       final models = await remoteDataSource.getProducts(
         category: category,
         query: query,
@@ -63,14 +71,43 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Either<Failure, bool>> toggleFavorite(String productId) async {
     try {
-      if (_favoriteProductIds.contains(productId)) {
-        _favoriteProductIds.remove(productId);
-      } else {
-        _favoriteProductIds.add(productId);
+      bool isFav;
+      try {
+        isFav = await remoteDataSource.toggleFavorite(productId);
+      } catch (_) {
+        // Fallback to local state if network call fails or offline
+        if (_favoriteProductIds.contains(productId)) {
+          _favoriteProductIds.remove(productId);
+          isFav = false;
+        } else {
+          _favoriteProductIds.add(productId);
+          isFav = true;
+        }
       }
-      return Right(_favoriteProductIds.contains(productId));
+
+      if (isFav) {
+        _favoriteProductIds.add(productId);
+      } else {
+        _favoriteProductIds.remove(productId);
+      }
+
+      return Right(isFav);
+    } on AppException catch (e) {
+      return Left(ServerFailure(message: e.message, code: e.statusCode));
     } catch (e) {
-      return Left(CacheFailure(message: e.toString()));
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Set<String>>> getFavoriteProductIds() async {
+    try {
+      final favIds = await remoteDataSource.getFavoriteProductIds();
+      _favoriteProductIds.clear();
+      _favoriteProductIds.addAll(favIds);
+      return Right(_favoriteProductIds);
+    } catch (e) {
+      return Right(_favoriteProductIds);
     }
   }
 }

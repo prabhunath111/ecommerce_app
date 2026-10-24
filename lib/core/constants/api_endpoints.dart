@@ -15,4 +15,8 @@ class ApiEndpoints {
 
   // Cart endpoints
   static const String addToCart = '/api/cart/add';
+
+  // Favorites endpoints
+  static const String favorites = '/api/favorites';
+  static const String toggleFavorite = '/api/favorites/';
 }
