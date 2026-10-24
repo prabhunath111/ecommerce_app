@@ -12,6 +12,7 @@ import '../../features/auth/domain/usecases/signup_usecase.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 
 import '../../features/cart/data/datasources/cart_local_data_source.dart';
+import '../../features/cart/data/datasources/cart_remote_data_source.dart';
 import '../../features/cart/data/repositories/cart_repository_impl.dart';
 import '../../features/cart/domain/repositories/cart_repository.dart';
 import '../../features/cart/domain/usecases/cart_usecases.dart';
@@ -119,8 +120,14 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<CartLocalDataSource>(
     () => CartLocalDataSourceImpl(storageService: sl()),
   );
+  sl.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(dioClient: sl()),
+  );
   sl.registerLazySingleton<CartRepository>(
-    () => CartRepositoryImpl(localDataSource: sl()),
+    () => CartRepositoryImpl(
+      localDataSource: sl(),
+      remoteDataSource: sl(),
+    ),
   );
   sl.registerLazySingleton(() => GetCartUseCase(repository: sl()));
   sl.registerLazySingleton(() => AddToCartUseCase(repository: sl()));

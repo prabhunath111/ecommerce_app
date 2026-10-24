@@ -23,9 +23,10 @@ class ProductModel extends ProductEntity {
     final int rawRatingCount = ratingMap != null && ratingMap['count'] is num
         ? (ratingMap['count'] as num).toInt()
         : 120;
+    final id = json['_id']?.toString() ?? json['_id']?.toString() ?? '';
 
     return ProductModel(
-      id: json['id']?.toString() ?? '',
+      id: id,//json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
       price: rawPrice,
       originalPrice: json['originalPrice'] != null

@@ -13,4 +13,6 @@ class ApiEndpoints {
   static const String login = '/api/auth/login';
   static const String users = '/users';
 
+  // Cart endpoints
+  static const String addToCart = '/api/cart/add';
 }
