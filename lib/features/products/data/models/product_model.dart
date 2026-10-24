@@ -15,7 +15,11 @@ class ProductModel extends ProductEntity {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
-    final double rawPrice = (json['price'] is num) ? (json['price'] as num).toDouble() : 0.0;
+    final int rawPrice = (json['price'] is num) ? (json['price'] as num).toInt() : 0;
+    final int? rawOriginalPrice = json['originalPrice'] != null
+        ? (json['originalPrice'] as num).toInt()
+        : (rawPrice > 0 ? (rawPrice * 1.25).toInt() : null);
+
     final ratingMap = json['rating'] is Map ? json['rating'] as Map<String, dynamic> : null;
     final double rawRating = ratingMap != null && ratingMap['rate'] is num
         ? (ratingMap['rate'] as num).toDouble()
@@ -23,15 +27,13 @@ class ProductModel extends ProductEntity {
     final int rawRatingCount = ratingMap != null && ratingMap['count'] is num
         ? (ratingMap['count'] as num).toInt()
         : 120;
-    final id = json['_id']?.toString() ?? json['_id']?.toString() ?? '';
+    final id = (json['_id'] ?? json['id'])?.toString() ?? '';
 
     return ProductModel(
-      id: id,//json['id']?.toString() ?? '',
+      id: id,
       title: json['title']?.toString() ?? '',
-      price: rawPrice,
-      originalPrice: json['originalPrice'] != null
-          ? (json['originalPrice'] as num).toDouble()
-          : (rawPrice * 1.25),
+      price: rawPrice.toDouble(),
+      originalPrice: rawOriginalPrice?.toDouble(),
       description: json['description']?.toString() ?? '',
       category: json['category']?.toString() ?? 'General',
       image: json['image']?.toString() ?? '',

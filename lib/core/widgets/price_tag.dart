@@ -17,6 +17,13 @@ class PriceTag extends StatelessWidget {
     this.showCurrency = true,
   });
 
+  String _formatPrice(double value) {
+    if (value == value.roundToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -33,13 +40,13 @@ class PriceTag extends StatelessWidget {
         textBaseline: TextBaseline.alphabetic,
         children: [
           Text(
-            '$currency${price.toStringAsFixed(2)}',
+            '$currency${_formatPrice(price)}',
             style: priceStyle ?? AppTextStyles.priceStyle.copyWith(color: AppColors.primary),
           ),
           if (hasDiscount) ...[
             const SizedBox(width: 6),
             Text(
-              '$currency${originalPrice!.toStringAsFixed(2)}',
+              '$currency${_formatPrice(originalPrice!)}',
               style: AppTextStyles.bodySmall.copyWith(
                 decoration: TextDecoration.lineThrough,
                 color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
